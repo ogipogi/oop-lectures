@@ -13,4 +13,13 @@ func TestHello(t *testing.T) {
 		}
 	})
 
+	t.Run("empty string defaults to 'World'", func(t *testing.T) {
+		got := Hello("")
+		want := "Hello, World"
+
+		if got != want {
+			t.Errorf("got %q want %q", got, want)
+		}
+	})
+
 }
