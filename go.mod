@@ -1,0 +1,3 @@
+module oop-lectures
+
+go 1.22.1
