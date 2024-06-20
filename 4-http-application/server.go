@@ -7,26 +7,29 @@ import (
 	"strings"
 )
 
-func PlayerServer(w http.ResponseWriter, r *http.Request) {
+type PlayerStore interface {
+	GetPlayerScore(name string) int
+	RecordWin(name string)
+}
+
+type PlayerServer struct {
+	store PlayerStore
+}
+
+func (p *PlayerServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	player := strings.TrimPrefix(r.URL.Path, "/players/")
 	switch r.Method {
 	case http.MethodPost:
 		w.WriteHeader(http.StatusAccepted)
 	case http.MethodGet:
-		fmt.Fprint(w, GetPlayerScore(player))
+		p.showScore(w, player)
 	}
 }
 
-func GetPlayerScore(name string) string {
-	if name == "Pepper" {
-		return "20"
+func (p *PlayerServer) showScore(w http.ResponseWriter, player string) {
+	score := p.store.GetPlayerScore(player)
+	if score == 0 {
+		w.WriteHeader(http.StatusNotFound)
 	}
-	if name == "Floyd" {
-		return "10"
-	}
-	return ""
-}
-
-func main() {
-	http.ListenAndServe(":5000", http.HandlerFunc(PlayerServer))
+	fmt.Fprint(w, score)
 }

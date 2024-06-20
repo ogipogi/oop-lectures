@@ -202,7 +202,6 @@ func (p *PlayerServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
     player := strings.TrimPrefix(r.URL.Path, "/players/")
     switch r.Method {
     case http.MethodPost:
-        p.store.RecordWin(player)
         w.WriteHeader(http.StatusAccepted)
     case http.MethodGet:
         p.showScore(w, player)
