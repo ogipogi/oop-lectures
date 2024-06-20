@@ -4,19 +4,27 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"strings"
 )
 
 func PlayerServer(w http.ResponseWriter, r *http.Request) {
-	player := r.URL.Path[len("/players/"):]
-	if r.Method == http.MethodPost {
+	player := strings.TrimPrefix(r.URL.Path, "/players/")
+	switch r.Method {
+	case http.MethodPost:
 		w.WriteHeader(http.StatusAccepted)
-	} else {
-		if player == "Pepper" {
-			fmt.Fprint(w, "20")
-		} else if player == "Floyd" {
-			fmt.Fprint(w, "10")
-		}
+	case http.MethodGet:
+		fmt.Fprint(w, GetPlayerScore(player))
 	}
+}
+
+func GetPlayerScore(name string) string {
+	if name == "Pepper" {
+		return "20"
+	}
+	if name == "Floyd" {
+		return "10"
+	}
+	return ""
 }
 
 func main() {
