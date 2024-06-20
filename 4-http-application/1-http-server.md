@@ -32,7 +32,7 @@ func TestGETPlayers(t *testing.T) {
 
 #### Implementation
 ```go
-// main.go
+// server.go
 package main
 
 import (
