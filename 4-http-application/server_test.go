@@ -36,3 +36,14 @@ func TestGETPlayers(t *testing.T) {
 		}
 	})
 }
+
+func TestStoreWins(t *testing.T) {
+	request, _ := http.NewRequest(http.MethodPost, "/players/Pepper", nil)
+	response := httptest.NewRecorder()
+
+	PlayerServer(response, request)
+
+	if response.Code != http.StatusAccepted {
+		t.Errorf("got status %d want %d", response.Code, http.StatusAccepted)
+	}
+}
