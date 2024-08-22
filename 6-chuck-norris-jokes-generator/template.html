@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chuck Norris Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 800px; /* Fixed width */
+        }
+        .joke {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            word-wrap: break-word; /* Ensure long text breaks to new lines */
+        }
+        .icon {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+        }
+        .new-joke-btn {
+            padding: 10px 20px;
+            background-color: #ff4757;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        .new-joke-btn:hover {
+            background-color: #ff6b81;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <img src="{{.IconURL}}" alt="Chuck Norris" class="icon">
+    <div class="joke">{{.Value}}</div>
+    <button class="new-joke-btn" onclick="fetchNewJoke()">Get a New Joke</button>
+</div>
+
+<script>
+    function fetchNewJoke() {
+        fetch('/joke')
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                document.querySelector('.joke').innerHTML = doc.querySelector('.joke').innerHTML;
+                document.querySelector('.icon').src = doc.querySelector('.icon').src;
+            })
+            .catch(error => console.error('Error fetching new joke:', error));
+    }
+</script>
+</body>
+</html>
