@@ -210,36 +210,74 @@ package main
 
 import "fmt"
 
-type Vehicle struct {
-    name string
+type transport interface {
+	getName() string
+	drive()
+	fly()
 }
 
-func (v Vehicle) GetName() string {
-    return v.name
+// base entity type
+type vehicle struct {
+	name string
 }
 
-type Car struct {
-    Vehicle
+func (v vehicle) getName() string {
+	return v.name
 }
 
-type Motorcycle struct {
-    Vehicle
+// sub entity type
+type car struct {
+	vehicle
+	wheel int
+	gate  int
 }
 
-func PrintVehicleName(v Vehicle) {
-    fmt.Println(v.GetName())
+func (c car) drive() {
+	fmt.Println("Driving car...")
+}
+
+func (c car) fly() {
+	// nothing
+}
+
+type motorcycle struct {
+	vehicle
+	wheel int
+}
+
+func (m motorcycle) drive() {
+	fmt.Println("Driving motorcycle...")
+}
+
+func (m motorcycle) fly() {
+	// nothing
+}
+
+type printer struct{}
+
+func (p printer) printTransportName(t transport) {
+	fmt.Println("Transport name: ", t.getName())
 }
 
 func main() {
-    car := Car{Vehicle{name: "Car"}}
-    motorcycle := Motorcycle{Vehicle{name: "Motorcycle"}}
+	car := car{
+		vehicle: vehicle{name: "Car"},
+		wheel:   4,
+		gate:    4,
+	}
 
-    PrintVehicleName(car.Vehicle)
-    PrintVehicleName(motorcycle.Vehicle)
+	motorcycle := motorcycle{
+		vehicle: vehicle{name: "Motorcycle"},
+		wheel:   2,
+	}
+
+	printer := printer{}
+	printer.printTransportName(car)
+	printer.printTransportName(motorcycle)
 }
+
 ```
-### Erklärung
-In diesem Beispiel verwenden wir Komposition anstelle von Vererbung, um das LSP zu erfüllen. `Car` und `Motorcycle` können durch `Vehicle` ersetzt werden, ohne dass das Verhalten des Programms geändert wird.
+
 
 ### Lösung
 ```go
@@ -247,37 +285,77 @@ package main
 
 import "fmt"
 
-type Vehicle interface {
-    GetName() string
+type transport interface {
+	getName() string
+	drive()
 }
 
-type Car struct {
-    name string
+// base entity type
+type vehicle struct {
+	name string
 }
 
-func (c Car) GetName() string {
-    return c.name
+func (v vehicle) getName() string {
+	return v.name
 }
 
-type Motorcycle struct {
-    name string
+func (v vehicle) drive() {
+	fmt.Printf("Driving %s...", v.name)
 }
 
-func (m Motorcycle) GetName() string {
-    return m.name
+// sub entity type
+type car struct {
+	vehicle
+	wheel int
+	gate  int
 }
 
-func PrintVehicleName(v Vehicle) {
-    fmt.Println(v.GetName())
+func (c car) drive() {
+	fmt.Println("Driving car...")
+}
+
+func (c car) fly() {
+	// nothing
+}
+
+type motorcycle struct {
+	vehicle
+	wheel int
+}
+
+func (m motorcycle) drive() {
+	fmt.Println("Driving motorcycle...")
+}
+
+func (m motorcycle) fly() {
+	// nothing
+}
+
+type printer struct{}
+
+func (p printer) printTransportName(t transport) {
+	fmt.Println("Transport name: ", t.getName())
 }
 
 func main() {
-    car := Car{name: "Car"}
-    motorcycle := Motorcycle{name: "Motorcycle"}
+	car := car{
+		vehicle: vehicle{name: "Car"},
+		wheel:   4,
+		gate:    4,
+	}
+	car.drive()
 
-    PrintVehicleName(car)
-    PrintVehicleName(motorcycle)
+	motorcycle := motorcycle{
+		vehicle: vehicle{name: "Motorcycle"},
+		wheel:   2,
+	}
+	motorcycle.drive()
+
+	printer := printer{}
+	printer.printTransportName(car)
+	printer.printTransportName(motorcycle)
 }
+
 ```
 ### Erklärung
 Hier haben wir eine `Vehicle`-Schnittstelle definiert, die eine `GetName`-Methode enthält. `Car` und `Motorcycle` implementieren diese Schnittstelle, sodass sie durch `Vehicle` ersetzt werden können.
