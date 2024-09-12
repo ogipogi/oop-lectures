@@ -1,5 +1,6 @@
 services:
   db:
+      container_name: example-db
       image: postgres:16.4
       restart: always
       ports:
@@ -8,6 +9,19 @@ services:
         - example
       volumes:
         - ./db-data:/var/lib/postgresql/data
+      env_file:
+        - .env
+  api:
+      container_name: example-api
+      build:
+        context: .
+        dockerfile: Dockerfile
+      ports:
+        - 8080:8080
+      networks:
+        - example
+      depends_on:
+        - db
       env_file:
         - .env
 networks:
