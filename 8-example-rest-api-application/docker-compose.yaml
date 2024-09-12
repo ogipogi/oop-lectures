@@ -11,6 +11,11 @@ services:
         - ./db-data:/var/lib/postgresql/data
       env_file:
         - .env
+      healthcheck:
+        test: ["CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'"]
+        interval: 5s
+        timeout: 5s
+        retries: 5
   api:
       container_name: example-api
       build:
@@ -21,7 +26,8 @@ services:
       networks:
         - example
       depends_on:
-        - db
+        db:
+          condition: service_healthy
       env_file:
         - .env
 networks:
